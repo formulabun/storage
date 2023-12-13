@@ -1,6 +1,9 @@
 package storage
 
-import "testing"
+import (
+	"path"
+	"testing"
+)
 
 func TestUrlIsOnlyFilename(t *testing.T) {
 	testData := []struct {
@@ -10,7 +13,7 @@ func TestUrlIsOnlyFilename(t *testing.T) {
 		{"", false},
 		{"/", false},
 		{"/filename", true},
-		{"/filename/", true},
+		{"/filename/", false},
 		{"/filename/checksum", false},
 		{"/filename/checksum/", false},
 		{"/filename/checksum/filename", false},
@@ -20,6 +23,9 @@ func TestUrlIsOnlyFilename(t *testing.T) {
 	for _, td := range testData {
 		res := urlIsOnlyFilename(td.path)
 		if res != td.isOnlyFilename {
+			clean := path.Clean(td.path)
+			left, right := path.Split(clean)
+			t.Logf("path: %#v, cleaned: %#v, split: %#v, %#v", td.path, clean, left, right)
 			t.Errorf("urlIsOnlyFilename(%#v) == %#v but expected %#v", td.path, res, td.isOnlyFilename)
 		}
 	}

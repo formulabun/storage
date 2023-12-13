@@ -41,6 +41,10 @@ func handlePath(url string) string {
 }
 
 func urlIsOnlyFilename(urlPath string) bool {
-	d, p := path.Split(path.Clean(urlPath))
-	return (d == "/") != (p == "")
+	cleaned := path.Clean(urlPath)
+	if cleaned != urlPath {
+		return false
+	}
+	d, p := path.Split(urlPath)
+	return d == "/" && p != ""
 }
